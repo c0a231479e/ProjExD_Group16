@@ -298,10 +298,15 @@ def eliminate_random_enemy():
 
     if ghosts:
         ghosts.pop(random.randint(0, len(ghosts) - 1))
+
     if ghosts:  # ゴーストがいる場合のみ
         ghost_to_remove = random.choice(ghosts)  # ランダムにゴーストを選択
         ghosts.remove(ghost_to_remove)  # ゴーストを削除
 
+# ヒールの処理
+def heal():
+    global current_health
+    current_health = min(current_health + healing_amount, max_health)
 # ドットの再生成関数
 def respawn_dots():
     global last_dot_spawa_time
@@ -315,14 +320,6 @@ def respawn_dots():
                     dot_rect = pygame.Rect(col_index * cell_size + cell_size // 2 - dot_size // 2, row_index * cell_size + cell_size // 2 - dot_size // 2, dot_size, dot_size)
                     #if dot_rect not in dots:
                     dots.append(dot_rect)
-    if ghosts:  # ゴーストがいる場合のみ
-        ghost_to_remove = random.choice(ghosts)  # ランダムにゴーストを選択
-        ghosts.remove(ghost_to_remove)  # ゴーストを削除
-
-# ヒールの処理
-def heal():
-    global current_health
-    current_health = min(current_health + healing_amount, max_health)
 
 # 描画処理
 def draw_game():
@@ -447,11 +444,6 @@ while running:
 
             score -= 100
             wallhack.toggle()
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_v:
-            score -= 10
-            vacuum.toggle()
-
-    # キー入力の取得
     keys = pygame.key.get_pressed()
 
 
@@ -484,6 +476,8 @@ while running:
     # 各種関数の実行
     move_pacman(keys)
     move_ghosts()
+    
+    # ゴーストとの衝突判定
     if vacuum.enabled:
         dot_vacuum()
     respawn_dots()
